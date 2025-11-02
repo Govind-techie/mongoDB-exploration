@@ -10,6 +10,7 @@
 - [Repository Structure](#repository-structure)
 - [Learning Path](#learning-path)
   - [Part 1: Core Concepts](#part-1-core-concepts)
+  - [Part 2: Mongoose ODM](#part-2-mongoose-odm)
 - [Roadmap](#roadmap)
 
 ---
@@ -35,6 +36,12 @@ mongoDB-exploration/
 │   ├── 03_updateDB.mongodb
 │   ├── 04_nesting.mongodb
 │   └── 05_deleteDB.mongodb
+│
+├── MongoDB-2/
+│   ├── index.js
+│   ├── books.js
+│   ├── package.json
+│   └── node_modules/
 │
 └── README.md
 ```
@@ -121,6 +128,47 @@ mongoDB-exploration/
 
 ---
 
+### Part 2: Mongoose ODM
+
+MongoDB-2 introduces **Mongoose**, an Object Data Modeling (ODM) library that provides a schema-based solution for modeling MongoDB data in Node.js applications.
+
+1. **Mongoose Fundamentals**
+   - *File:* `index.js`
+   - *Description:* Introduction to Mongoose ODM and connecting MongoDB with Node.js.
+   - *Topics:* Database connection, schema definition, model creation, CRUD operations with Mongoose methods.
+
+2. **Advanced Mongoose Concepts**
+   - *File:* `books.js`
+   - *Description:* Deep dive into Mongoose features including validation, immutable fields, and async operations.
+   - *Topics:* Schema validations, default values, enum constraints, immutable fields, validation in update operations, error handling.
+
+#### Detailed Module Breakdown
+
+<details>
+<summary><b>1. Mongoose Fundamentals</b> - Node.js Integration</summary>
+
+- Connecting to MongoDB using Mongoose
+- Schema and Model creation
+- Document instances and saving
+- Query operations (find, findById)
+- Update operations (updateOne, updateMany, findOneAndUpdate)
+- Delete operations (deleteOne, deleteMany, findOneAndDelete)
+- Operation buffering in Mongoose
+</details>
+
+<details>
+<summary><b>2. Advanced Mongoose Concepts</b> - Validation & Data Integrity</summary>
+
+- **Schema Validations:** `required`, `maxLength`, `min`, `enum`
+- **Default Values:** Setting default field values
+- **Immutable Fields:** Fields that cannot be modified after creation
+- **Validation in Updates:** Using `runValidators: true` option
+- **Error Handling:** Accessing validation error messages
+- **Async Operations:** Working with Promises in Mongoose
+</details>
+
+---
+
 ## 🗺️ Roadmap
 
 ### ✅ Completed
@@ -129,6 +177,8 @@ mongoDB-exploration/
 - [x] Update Operations
 - [x] Nested Structures
 - [x] Deletion Operations
+- [x] Mongoose ODM Fundamentals
+- [x] Advanced Mongoose Concepts
 
 ### 🔜 Upcoming Topics
 
