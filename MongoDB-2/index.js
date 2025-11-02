@@ -1,5 +1,44 @@
+/*
+ MONGOSE & JAVASCRIPT INTERACTION - EXPLANATORY NOTES
+ 
+ This file demonstrates CRUD operations (Create, Read, Update, Delete) using Mongoose.
+ Each operation shows how JavaScript code interacts with MongoDB through Mongoose.
+ 
+ Key Operations Covered:
+ 
+ 1. CREATE Operations (JavaScript to MongoDB)
+    - document.save() - Creates a new document from JavaScript instance
+    - Model.insertMany() - Inserts multiple documents in one operation
+    - JavaScript objects become MongoDB documents with _id
+ 
+ 2. READ Operations (MongoDB to JavaScript)
+    - Model.find() - Queries MongoDB and returns JavaScript array of documents
+    - Model.find({ conditions }) - Filtered queries using JavaScript query objects
+    - Model.findById() - Find by MongoDB's unique _id
+    - Query results are converted from MongoDB format to JavaScript objects
+ 
+ 3. UPDATE Operations (Modify MongoDB documents from JavaScript)
+    - Model.updateOne() - Updates first matching document
+    - Model.updateMany() - Updates all matching documents
+    - Model.findOneAndUpdate() - Finds and updates, returns document
+    - Model.findByIdAndUpdate() - Finds by _id and updates
+ 
+ 4. DELETE Operations (Remove documents from MongoDB)
+    - Model.deleteOne() - Deletes first matching document
+    - Model.deleteMany() - Deletes all matching documents
+    - Model.findOneAndDelete() - Finds and deletes, returns deleted document
+    - Model.findByIdAndDelete() - Finds by _id and deletes
+ 
+ How JavaScript Queries Work:
+ - Query objects in JavaScript (like { age: { $gt: 18 } }) are converted to MongoDB queries
+ - $gt, $lt, $eq are MongoDB query operators used in JavaScript
+ - Results are Promise-based and can be handled with .then()/.catch() or async/await
+ */
+
 const mongoose = require('mongoose');
 
+// Connection Pattern: Using async/await with Promise chains
+// Mongoose.connect() returns a Promise that resolves when connection is established
 main()
     .then(() => {
         console.log("connection successful");
@@ -7,145 +46,286 @@ main()
     .catch(err => console.log(err));
 
 async function main() {
+    // Connecting to MongoDB database named "test"
+    // This is an async operation that returns a Promise
+    // We await it to ensure connection is established before proceeding
     await mongoose.connect('mongodb://127.0.0.1:27017/test');
 
     // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 };
 
 /* 
-Note: 
-Mongoose uses Operation Buffering
-Mongoose lets you start using your models immediately, without waiting for mongoose to establish a connection to MongoDB.
+Operation Buffering in Mongoose (JavaScript Behavior):
+- Mongoose uses Operation Buffering to allow you to use models before connection is established
+- When you call operations like User.save() or User.find() before connection, Mongoose queues them in JavaScript memory
+- Once connection is established, Mongoose executes all buffered operations automatically
+- This makes JavaScript code more flexible - you don't need to await connection before defining models/operations
 */
 
+// SCHEMA DEFINITION: JavaScript Object Structure for MongoDB Documents
+// Schema defines what fields a document can have - this is JavaScript-level structure
+// Mongoose uses this schema to validate and structure data before sending to MongoDB
 const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    age: Number,
+    name: String,   // JavaScript String type - Mongoose converts to MongoDB string
+    email: String,  // Simple schema definition (no validation rules)
+    age: Number,    // JavaScript Number type - Mongoose converts to MongoDB number
 });
 
+// MODEL CREATION: Converting Schema to JavaScript Constructor Function
+// mongoose.model() compiles the schema into a JavaScript class/constructor
+// First arg: Collection name in MongoDB (will be "users" - Mongoose pluralizes)
+// Second arg: The schema object we defined above
+// Returns: A JavaScript constructor function that we can use with 'new' or without
 const User = mongoose.model("User", userSchema);
 
+// DOCUMENT CREATION: Creating JavaScript Instances from Model
+// You can create documents with or without 'new' keyword - both work in Mongoose
+// These are JavaScript objects that exist in memory until .save() is called
 let user1 = User({name: "user_123", email: "user123@gmail.com", age: 15});
 let user2 = User({name: "user_234", email: "user234@gmail.com", age: 21});
 
-// Note: save method returns a promise.
-user1.save();
+// SAVING DOCUMENTS: JavaScript to MongoDB Translation
+// .save() method:
+// 1. Takes the JavaScript object (document instance)
+// 2. Converts it to MongoDB document format
+// 3. Sends INSERT operation to MongoDB
+// 4. Returns a Promise that resolves with the saved document (including _id from MongoDB)
+// Note: .save() is an async operation that returns a Promise
+// If save fails, it rejects the Promise with an error
+user1.save(); // Fire and forget - no error handling (not recommended for production)
 
 user2.save()
 .then((res) => {
+    // Success: 'res' is the saved document (JavaScript object with _id from MongoDB)
+    // The _id is automatically generated by MongoDB and added to the JavaScript object
     console.log("Data saved");
 })
 .catch((err) => {
+    // Error: 'err' is a JavaScript error object (ValidationError, ConnectionError, etc.)
     console.log(err);
 });
 
-// Inserting Multiple Documents
+// INSERTING MULTIPLE DOCUMENTS: Bulk Insert Operation
+// insertMany() method:
+// 1. Takes an array of JavaScript objects
+// 2. Converts each object to MongoDB document format
+// 3. Sends bulk INSERT operation to MongoDB (more efficient than multiple .save() calls)
+// 4. Returns a Promise that resolves with array of saved documents (with _ids)
+// 
+// Benefits: Single database operation instead of multiple, faster execution
+// JavaScript array of objects → MongoDB bulk insert → JavaScript array of documents with _ids
 User.insertMany([
     {name: "Tony", email: "tony@gmail.com", age: 19},
     {name: "Peter", email: "peter123@gmail.com", age: 16},
     {name: "Bruce", email: "bruce908@yahoo.in", age: 32}
 ])
 .then((res) => {
+    // Success: 'res' is an array of JavaScript objects (saved documents with _ids from MongoDB)
     console.log(res);
     console.log("Data Saved");
 })
 .catch((err) => {
+    // Error: If any document fails validation, entire operation fails
+    // 'err' contains information about which document(s) failed
     console.log(err);
 });
 
 /*
-Note: 
-Model.find() //returns a Query Object (thennable)
-Mongoose Queries are not promises. But they have a .then() method.
+QUERY OBJECTS IN MONGOOSE (JavaScript Queries):
+- Model.find() returns a Query Object (not a Promise, but "thennable")
+- Query Objects have a .then() method, so they can be used like Promises
+- Queries are executed lazily - they don't run until you call .then(), .exec(), or await
+- This allows you to chain query methods like .limit(), .sort(), .select() before execution
+- JavaScript query syntax (like { age: { $gt: 18 } }) is converted to MongoDB queries
 */
 
-User.find({}) // Return all documents stored in collection
+// READING DOCUMENTS: MongoDB to JavaScript Translation
+// find() method:
+// 1. Takes a JavaScript query object (or empty object {} for all documents)
+// 2. Converts JavaScript query to MongoDB query syntax
+// 3. Executes query in MongoDB
+// 4. Converts MongoDB documents back to JavaScript objects
+// 5. Returns Promise that resolves with array of JavaScript objects
+User.find({}) // Empty object {} means: find all documents in collection
     .then((res) => {
+        // Success: 'res' is an array of JavaScript objects (all documents from MongoDB)
+        // Each object represents one MongoDB document
+        console.log(res);
+    })
+    .catch((err) => {
+        // Error: Query execution failed (connection error, invalid query, etc.)
+        console.log(err);
+    });
+
+// FILTERED QUERIES: Using JavaScript Query Operators
+// { age: { $gt: 18 } } is a JavaScript object representing a MongoDB query
+// $gt is a MongoDB query operator meaning "greater than"
+// This JavaScript object is converted to MongoDB query: { age: { $gt: 18 } }
+// MongoDB finds all documents where age field is greater than 18
+// Results are converted back to JavaScript objects and returned as array
+User.find({ age: { $gt: 18 } }) // Find documents where age is greater than 18
+    .then((res) => {
+        // Success: 'res' is an array of JavaScript objects matching the condition
         console.log(res);
     })
     .catch((err) => {
         console.log(err);
     });
 
-User.find({ age: { $gt: 18 } }) // Returns documents based on conditions
-    .then((res) => {
-        console.log(res);
-    })
-    .catch((err) => {
-        console.log(err);
-    });
-
+// FINDING BY ID: Using MongoDB's Unique Identifier
+// findById() method:
+// 1. Takes a MongoDB _id (string or ObjectId) - the unique identifier MongoDB assigns
+// 2. Queries MongoDB collection for document with matching _id
+// 3. Returns Promise that resolves with single JavaScript object (or null if not found)
+// 
+// Note: _id is automatically generated by MongoDB when document is created
+// It's stored as ObjectId in MongoDB but can be passed as string in JavaScript
 User.findById('69074ca54c773cd419857258')
     .then((res) => {
+        // Success: 'res' is a single JavaScript object (the document) or null if not found
+        // Unlike find(), this returns a single object, not an array
         console.log(res);
     })
     .catch((err) => {
+        // Error: Invalid _id format or query execution failed
         console.log(err)
     });
 
-// Update in mongoose
+// UPDATING DOCUMENTS: Modifying MongoDB Documents from JavaScript
+// Update operations take two JavaScript objects:
+// 1. Filter object: Identifies which documents to update (MongoDB query syntax)
+// 2. Update object: Specifies what changes to make
+
+// updateOne() method:
+// 1. Finds first document matching the filter (JavaScript query object)
+// 2. Updates that single document in MongoDB
+// 3. Returns Promise with update result info (not the document itself)
+// Returns: { matchedCount: 1, modifiedCount: 1 } if successful
 User.updateOne({ name: "Bruce" }, { age: 35 })
-  .then((res) => console.log(res))
+  .then((res) => {
+      // Success: 'res' is a result object with info about the update operation
+      // Does NOT return the updated document, just operation metadata
+      console.log(res)
+  })
   .catch((err) => console.log(err));
 
+// updateMany() method:
+// 1. Finds ALL documents matching the filter (JavaScript query object)
+// 2. Updates all matching documents in MongoDB
+// 3. Returns Promise with update result info (how many documents were updated)
+// Returns: { matchedCount: N, modifiedCount: N } where N is number of documents updated
 User.updateMany({age: {$gt: 18}}, {age: 21})
 .then((res) => {
+    // Success: 'res' contains information about how many documents matched and were modified
+    // Example: { matchedCount: 5, modifiedCount: 5 } means 5 documents were updated
     console.log(res);
 })
 .catch((err) => {
     console.log(err);
 });
 
-//  // In this specfic method it first find and return the old value and then update the value.
-User.findOneAndUpdate({name: "Bruce"}, {age: 32}, {new: true}) // Note: But when new sets to true it directly returns the modify values
+// findOneAndUpdate() method:
+// 1. Finds first document matching the filter (JavaScript query object)
+// 2. Updates that document in MongoDB
+// 3. Returns the document (old or new, based on {new: true/false} option)
+// 
+// By default, returns the OLD document (before update)
+// With {new: true}, returns the NEW document (after update)
+// This combines find + update in one operation and returns the document
+User.findOneAndUpdate({name: "Bruce"}, {age: 32}, {new: true})
 .then((res) => {
+    // Success: 'res' is the updated document (JavaScript object) because {new: true}
+    // Without {new: true}, it would return the document BEFORE the update
     console.log(res);
 })
 .catch((err) => {
     console.log(err);
 });
 
-// // Example: findByIdAndUpdate()
-// // This method finds a document by its unique _id and updates it.
-// // The { new: true } option ensures that the updated document is returned instead of the old one.
+// findByIdAndUpdate() method:
+// 1. Finds document by MongoDB _id (unique identifier)
+// 2. Updates that document in MongoDB
+// 3. Returns the document (old or new, based on {new: true/false} option)
+// 
+// Similar to findOneAndUpdate(), but uses _id instead of filter object
+// More efficient when you know the specific document's _id
 User.findByIdAndUpdate('69074e8e81d1da5edfe31a1f', { age: 40 }, { new: true })
   .then((res) => {
+    // Success: 'res' is the updated document (JavaScript object) because {new: true}
+    // The document returned includes all fields, not just the updated ones
     console.log("Updated Document by ID:", res);
   })
   .catch((err) => {
+    // Error: Invalid _id format, document not found, or update operation failed
     console.log(err);
   });
 
-// Delete in Mongoose
+// DELETING DOCUMENTS: Removing Documents from MongoDB
+// Delete operations take filter objects (JavaScript query objects) to identify documents to delete
+
+// deleteOne() method:
+// 1. Finds first document matching the filter (JavaScript query object)
+// 2. Deletes that single document from MongoDB
+// 3. Returns Promise with delete result info (not the deleted document)
+// Returns: { deletedCount: 1 } if successful
 User.deleteOne({name: "Bruce"})
-.then((res) => {console.log(res)})
+.then((res) => {
+    // Success: 'res' is a result object with info about the delete operation
+    // Does NOT return the deleted document, just operation metadata
+    // Example: { acknowledged: true, deletedCount: 1 }
+    console.log(res)
+})
 .catch((err) => {console.log(err)});
 
-
+// deleteMany() method:
+// 1. Finds ALL documents matching the filter (JavaScript query object)
+// 2. Deletes all matching documents from MongoDB
+// 3. Returns Promise with delete result info (how many documents were deleted)
+// Returns: { deletedCount: N } where N is number of documents deleted
+// 
+// WARNING: This can delete multiple documents - use carefully!
 User.deleteMany({age: {$eq: 21}})
-.then((res) => {console.log(res)})
+.then((res) => {
+    // Success: 'res' contains information about how many documents were deleted
+    // Example: { acknowledged: true, deletedCount: 3 } means 3 documents were deleted
+    console.log(res);
+})
 .catch((err) => {console.log(err)});
 
-// Example: findOneAndDelete()
-// This method finds a document matching the given filter and deletes it.
-// It returns the deleted document as the result.
+// findOneAndDelete() method:
+// 1. Finds first document matching the filter (JavaScript query object)
+// 2. Deletes that document from MongoDB
+// 3. Returns the deleted document as a JavaScript object
+// 
+// Unlike deleteOne(), this returns the actual deleted document, not just metadata
+// Useful when you need to know what was deleted
 User.findOneAndDelete({ name: "user_123" })
   .then((res) => {
+    // Success: 'res' is the deleted document (JavaScript object) or null if not found
+    // This gives you the document data before it's removed from MongoDB
     console.log("Deleted Document using findOneAndDelete:", res);
   })
   .catch((err) => {
+    // Error: Query execution failed or invalid filter
     console.log(err);
   });
 
-// Example: findByIdAndDelete()
-// This method finds a document by its unique _id and deletes it.
-// Replace the _id with the one present in your database.
+// findByIdAndDelete() method:
+// 1. Finds document by MongoDB _id (unique identifier)
+// 2. Deletes that document from MongoDB
+// 3. Returns the deleted document as a JavaScript object
+// 
+// Similar to findOneAndDelete(), but uses _id instead of filter object
+// More efficient when you know the specific document's _id
+// Like findOneAndDelete(), this returns the actual deleted document
 User.findByIdAndDelete('69074e8e81d1da5edfe31a1e')
   .then((res) => {
+    // Success: 'res' is the deleted document (JavaScript object) or null if not found
+    // Replace the _id with an actual _id from your database to test
     console.log("Deleted Document using findByIdAndDelete:", res);
   })
   .catch((err) => {
+    // Error: Invalid _id format or delete operation failed
     console.log(err);
   });
 
