@@ -128,7 +128,7 @@ mongoDB-exploration/
 
 ---
 
-### Part 2: Mongoose ODM
+### Part 2: Mongoose ODM (Object Data Modeling)
 
 MongoDB-2 introduces **Mongoose**, an Object Data Modeling (ODM) library that provides a schema-based solution for modeling MongoDB data in Node.js applications.
 
