@@ -1,0 +1,38 @@
+/*
+ MongoDB Delete Operations — Notes
+ 
+This file demonstrates how to remove documents and databases in MongoDB.
+
+1. Deletion Methods:
+   - deleteOne(): Removes the first document that matches a filter.
+   - deleteMany(): Removes all documents matching a filter.
+   - dropDatabase(): Deletes the entire database, including all collections and documents.
+
+2. Important Notes:
+   - Be cautious while using deleteMany() and dropDatabase() as they can remove large amounts of data permanently.
+   - Always verify your filters before deleting documents.
+*/
+
+// Delete one document where city = "Mumbai"
+// Removes the first matching document found in the collection.
+db.student.deleteOne({city: "Mumbai"});
+
+// Delete one document where marks < 75
+// Removes the first document with marks less than 75.
+db.student.deleteOne({marks: {$lt: 75}});
+
+// Delete all documents where city = "Delhi"
+// Removes every document that matches the filter condition.
+db.student.deleteMany({city: "Delhi"});
+
+// Delete all documents from the "student" collection
+// Passing an empty filter {} removes all documents but keeps the collection itself.
+db.student.deleteMany({}); // Empty the collection
+
+// Drop the entire database
+// Permanently deletes the currently selected database along with all its collections.
+db.dropDatabase(); // Drops the current database
+
+// Verify remaining data
+// This should return an empty result if all documents were deleted successfully.
+db.student.find();

@@ -1,0 +1,14 @@
+{
+  "mongoDB.confirmConnection": false,
+  "mongodb.confirmConnection": false,
+  "mongo.confirmConnection": false,
+  "mdb.confirmConnection": false,
+  "mdb.confirmRunAll": false,
+  "mongodb.confirmConnectionPrompt": false,
+  "mongodb.showConnectionConfirmation": false,
+  "mongodb.promptForConnection": false,
+  "mongo.confirmConnectionPrompt": false,
+  "mongo.showConnectionConfirmation": false,
+  "mdb.confirmConnectionPrompt": false
+}
+

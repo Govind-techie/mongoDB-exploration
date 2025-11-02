@@ -1,0 +1,67 @@
+/*
+ MongoDB Query Operators — Notes and Examples
+
+This file demonstrates how to filter and query documents
+in MongoDB using various query operators.
+
+1. Comparison Operators:
+   - $gt : Greater than
+   - $gte: Greater than or equal to
+   - $lt : Less than
+   - $lte: Less than or equal to
+   - $ne : Not equal
+   - $in : Matches any value in an array
+   - $nin: Excludes values in an array
+
+2. Logical Operators:
+   - $or  : Matches documents where at least one condition is true
+   - $and : Matches documents where all conditions are true
+
+3. Existence Operators:
+   - $exists: Checks if a field exists or not in the document
+
+Each query example below includes a brief explanation
+of what the command is doing.
+*/
+
+// Find students with marks greater than 70
+// Returns documents where the 'marks' field has a value greater than 70.
+db.student.find({ marks: { $gt: 70 } });
+
+// Find students with marks greater than or equal to 65
+// Returns all students whose marks are at least 65.
+db.student.find({ marks: { $gte: 65 } });
+
+// Find students whose city is either Delhi or Mumbai
+// The $in operator matches any of the specified values in the given array.
+db.student.find({ city: { $in: ["Delhi", "Mumbai"] } });
+
+// Find students with marks greater than 80 OR city equal to Delhi
+// The $or operator allows matching multiple alternative conditions.
+db.student.find({ $or: [{ marks: { $gt: 80 } }, { city: "Delhi" }] });
+
+// Find students with marks less than 70
+// Returns all documents where the 'marks' field is below 70.
+db.student.find({ marks: { $lt: 70 } });
+
+// Find students with marks less than or equal to 65
+// Matches all students with marks 65 or lower.
+db.student.find({ marks: { $lte: 65 } });
+
+// Find students where marks are not equal to 65
+// The $ne operator filters out documents that have marks exactly equal to 65.
+db.student.find({ marks: { $ne: 65 } });
+
+// Find students whose city is NOT Delhi or Mumbai
+// The $nin operator excludes all documents that match any values inside the array.
+db.student.find({ city: { $nin: ["Delhi", "Mumbai"] } });
+
+// Find students with marks greater than 70 AND city equal to Mumbai
+// The $and operator ensures both conditions must be true for a match.
+db.student.find({ $and: [{ marks: { $gt: 70 } }, { city: "Mumbai" }] });
+
+// Find students who either have marks less than 70 or have no 'marks' field
+// The $exists operator checks for field existence.
+db.student.find({
+  $or: [{ marks: { $lt: 70 } }, { marks: { $exists: false } }]
+});

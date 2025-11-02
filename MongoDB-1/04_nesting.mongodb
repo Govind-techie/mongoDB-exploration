@@ -1,0 +1,24 @@
+/*
+ MongoDB Nested Documents — Notes
+
+This file demonstrates how to work with nested (embedded) documents
+in MongoDB. A nested document is a document within another document.
+
+1. Nested Documents:
+   - A field in a document can contain an object (another document).
+   - This helps organize related data together.
+
+2. Accessing Nested Fields:
+   - Use dot notation ("field.subfield") to access values within nested documents.
+   - Example: "perfromance.marks" refers to the field "marks" inside the "perfromance" object.
+
+3. Querying Nested Fields:
+   - You can filter or search using dot notation to match nested values.
+*/
+
+// Insert a new document with a nested object inside the "perfromance" field
+db.student.insertOne({ name: "farah", perfromance: { marks: 88, grade: 'A' } })
+
+// Query for a document where the nested field "perfromance.marks" equals 88
+// Dot notation allows MongoDB to look inside the nested document and match the "marks" value.
+db.student.find({"perfromance.marks": 88});

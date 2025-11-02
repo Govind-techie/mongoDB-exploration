@@ -1,0 +1,76 @@
+/*
+ MongoDB Update Operators — Notes and Examples
+
+This file demonstrates how to modify documents in MongoDB
+using update operators.
+
+1. Basic Update Methods:
+   - updateOne(): Updates the first document that matches a filter.
+   - updateMany(): Updates all documents matching a filter.
+   - replaceOne(): Replaces the entire document with a new one.
+
+2. Common Update Operators:
+   - $set   : Updates specific fields or adds them if they don't exist.
+   - $inc   : Increments a numeric field by a specified value.
+   - $mul   : Multiplies the value of a field.
+   - $rename: Renames a field.
+   - $unset : Removes a field from the document.
+   - $min   : Updates the field only if the new value is less than the current value.
+   - $max   : Updates the field only if the new value is greater than the current value.
+   - $push  : Adds an element to an array.
+   - $pull  : Removes an element from an array.
+
+Each example below shows how these commands are used.
+*/
+
+// Update a specific document where name = "Adam" and set marks to 95
+// The $set operator modifies the specified field value.
+db.student.updateOne({ name: "Adam" }, { $set: { marks: 95 } });
+
+// Verify the update by finding the updated document
+db.student.find({ name: "Adam" });
+
+// Increase marks by 5 using $inc
+// Adds 5 to the current "marks" value.
+db.student.updateOne({ name: "Adam" }, { $inc: { marks: 5 } });
+
+// Multiply marks by 2 using $mul
+// Multiplies the current value of "marks" by 2.
+db.student.updateOne({ name: "Adam" }, { $mul: { marks: 2 } });
+
+// Rename a field using $rename (for example, rename "marks" to "score")
+// Renames the specified field key in the document.
+db.student.updateOne({}, { $rename: { "marks": "score" } });
+
+// Remove a field using $unset (for example, remove the "age" field)
+// Deletes the field from the document.
+db.student.updateOne({ name: "Adam" }, { $unset: { age: "" } });
+
+// Update the value only if the provided value is less than the current one using $min
+// Keeps the smaller value between the existing one and the given one.
+db.student.updateOne({ name: "Adam" }, { $min: { score: 80 } });
+
+// Update the value only if the provided value is greater than the current one using $max
+// Keeps the greater value between the existing one and the given one.
+db.student.updateOne({ name: "Adam" }, { $max: { score: 100 } });
+
+// Add a new value to an array field using $push
+// If the "subjects" array does not exist, MongoDB will create it automatically.
+db.student.updateOne({ name: "Adam" }, { $push: { subjects: "Math" } });
+
+// Remove a value from an array field using $pull
+// Removes the specified element from an existing array.
+db.student.updateOne({ name: "Adam" }, { $pull: { subjects: "Math" } });
+
+// Update multiple documents using updateMany()
+// Example: Increase marks by 10 for all students who have marks less than 90
+// This command affects all matching documents.
+db.student.updateMany({ marks: { $lt: 90 } }, { $inc: { marks: 10 } });
+
+// Replace an entire document using replaceOne()
+// Replaces the whole document for "Adam" with a new structure.
+// Warning: Fields not included in the replacement document will be removed.
+db.student.replaceOne(
+  { name: "Adam" },
+  { name: "Adam", score: 100, subjects: [] }
+);

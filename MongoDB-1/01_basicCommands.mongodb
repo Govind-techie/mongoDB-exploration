@@ -1,0 +1,58 @@
+/*
+ MongoDB — Basic Commands Overview
+
+- This file demonstrates fundamental MongoDB concepts and operations.
+
+1. Database:
+   - Databases are containers that hold collections.
+   - The "use('dbname')" command switches to an existing database or creates a new one when data is stored.
+
+2. Collections:
+   - Equivalent to tables in relational databases.
+   - Automatically created when data is first inserted.
+
+3. Documents:
+   - Individual records stored inside a collection.
+   - Represented in JSON-like (BSON) format.
+
+4. Core Commands Used:
+   - insertOne(): Inserts a single document.
+   - insertMany(): Inserts multiple documents.
+   - find(): Retrieves all matching documents.
+   - findOne(): Retrieves only the first matching document.
+
+This file explains how databases, collections, and documents work together,
+and how MongoDB dynamically creates collections and databases at runtime.
+*/
+
+// MongoDB Basics — Database, Collections, and Documents
+
+// 1. Use or create a database named "college".
+// If it doesn’t exist, MongoDB automatically creates it when you first store data.
+use('college');
+
+// 2. Create (or switch to) a collection named "student" and insert one document into it.
+// A collection in MongoDB is like a "table" in relational databases.
+// A document is a single record stored inside a collection (in JSON/BSON format).
+// The first time you use insertOne on a new collection, MongoDB automatically creates that collection at runtime.
+db.student.insertOne({ name: "Adam", age: 17, marks: 88 });
+
+// 3. Retrieve all documents from the "student" collection.
+// This will return every document (record) present inside the collection.
+db.student.find();
+
+// 4. Insert multiple documents at once using insertMany().
+// If the collection does not exist yet, MongoDB will create it automatically when data is inserted.
+db.student.insertMany([
+  { name: "bob", marks: 65 },
+  { name: "eve", city: "Delhi" }
+]);
+
+// 5. Find all documents that have a specific field value.
+// This query returns all documents where the field "city" equals "Delhi".
+// The result is always returned as an array of matching documents.
+db.student.find({ city: "Delhi" });
+
+// 6. Find only one document that matches the condition.
+// This command returns a single document (the first match) instead of an array.
+db.student.findOne({ city: "Delhi" });
