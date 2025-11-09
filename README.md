@@ -1,6 +1,6 @@
 # MongoDB Exploration
 
-**A focused learning repository covering essential MongoDB topics required for full-stack web development through three comprehensive parts.**
+**A focused learning repository covering essential MongoDB topics required for full-stack web development through four comprehensive parts.**
 
 ---
 
@@ -12,6 +12,7 @@
   - [Part 1: Core Concepts](#part-1-core-concepts)
   - [Part 2: Mongoose ODM](#part-2-mongoose-odm)
   - [Part 3: RESTful Web Application](#part-3-restful-web-application)
+  - [Part 4: MongoDB Relationships](#part-4-mongodb-relationships)
 - [Roadmap](#roadmap)
 
 ---
@@ -193,7 +194,7 @@ MongoDB-2 introduces **Mongoose**, an Object Data Modeling (ODM) library that pr
 
 ---
 
-### Part 3: RESTful Web Application with Express.js & EJS *(Concluding Chapter)*
+### Part 3: RESTful Web Application with Express.js & EJS
 
 MongoDB-3 demonstrates building a **complete RESTful web application** using MongoDB, Mongoose, Express.js, and EJS templating. This concluding module brings together all previous concepts to showcase how MongoDB integrates seamlessly with web servers, providing the essential foundation for full-stack web development.
 
@@ -257,6 +258,57 @@ MongoDB-3 demonstrates building a **complete RESTful web application** using Mon
 
 ---
 
+### Part 4: MongoDB Relationships *(Concluding Chapter)*
+
+This final chapter explores different types of relationships in MongoDB and how to implement them effectively using Mongoose. It demonstrates various data modeling patterns and their practical applications.
+
+1. **Embedded Relationships**
+   - *File:* `Models/user.js`
+   - *Description:* Implementation of One-to-Many relationships using embedded documents.
+   - *Topics:* User-Address relationship, schema design patterns, subdocument management, embedded validation.
+
+2. **Referenced Relationships**
+   - *File:* `Models/posts.js`
+   - *Description:* Exploring One-to-Squillions relationships using document references.
+   - *Topics:* User-Posts relationship, ObjectId references, population techniques, efficient querying.
+
+3. **Complex Relationships**
+   - *File:* `Models/customer.js`
+   - *Description:* Building sophisticated data relationships for real-world scenarios.
+   - *Topics:* Customer-Order system, multiple reference management, advanced population, data integrity.
+
+#### Detailed Module Breakdown
+
+<details>
+<summary><b>1. Embedded Relationships</b> - Document Design</summary>
+
+- Schema design with embedded documents
+- Array of subdocuments pattern
+- Validation in nested structures
+- Efficient querying of embedded data
+- Managing embedded document updates
+</details>
+
+<details>
+<summary><b>2. Referenced Relationships</b> - Document References</summary>
+
+- ObjectId references implementation
+- Population strategies
+- Efficient query patterns
+- Managing large-scale relationships
+- Reference integrity
+</details>
+
+<details>
+<summary><b>3. Complex Relationships</b> - Advanced Patterns</summary>
+
+- Multiple reference management
+- Bi-directional relationships
+- Cascade operations
+- Transaction handling
+- Performance optimization strategies
+</details>
+
 ## 🗺️ Roadmap
 
 ### ✅ Completed - All Essential Topics Covered
@@ -275,11 +327,17 @@ This repository covers **three comprehensive parts** focusing on essential Mongo
 - [x] Advanced Mongoose Concepts
 - [x] Schema Design & Validation
 
-**Part 3: Full-Stack Application (Concluding Chapter)**
+**Part 3: Full-Stack Application**
 - [x] RESTful Web Application with Express.js
 - [x] Mongoose Model & Schema Design
 - [x] Database Initialization & Bulk Operations
 - [x] EJS Templating & Frontend Integration
+
+**Part 4: MongoDB Relationships (Concluding Chapter)**
+- [x] Embedded Document Relationships
+- [x] Referenced Document Patterns
+- [x] Complex Data Relationships
+- [x] Data Modeling Best Practices
 
 ---
 
